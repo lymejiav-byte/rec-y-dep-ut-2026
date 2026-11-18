@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Evaluación Física — Laura Mejia | Recreación y Deporte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --lilac-deep: #2E1065;
+      --lilac-royal: #6B21A8;
+      --lilac-mid: #9333EA;
+      --lilac-soft: #FAF5FF;
+      --fuchsia-main: #C026D3;
+      --rose-main: #EC4899;
+      --pink-soft: #F472B6;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #FAF5FF;
+      background-image: radial-gradient(circle at 12% 10%, rgba(233, 213, 255, 0.45) 0%, transparent 40%),
+                        radial-gradient(circle at 88% 20%, rgba(251, 207, 232, 0.35) 0%, transparent 40%);
+      color: #1E1B4B;
+      overflow-x: hidden;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #2E1065 0%, #5B21B6 45%, #A21CAF 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(64px);
+      opacity: 0.38;
+      pointer-events: none;
+      animation: floatOrb 9s ease-in-out infinite alternate;
+    }
+
+    .hero-orb-1 {
+      width: 340px;
+      height: 340px;
+      background: #F472B6;
+      top: -115px;
+      right: -50px;
+    }
+
+    .hero-orb-2 {
+      width: 260px;
+      height: 260px;
+      background: #C084FC;
+      bottom: -95px;
+      left: 12%;
+      animation-delay: -4s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-22px, 16px) scale(1.1); }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.10s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .delay-4 { animation-delay: 0.20s; }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14% { transform: scale(1.18); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.14); }
+      70% { transform: scale(1); }
+    }
+
+    .pulse-heart {
+      animation: heartbeat 1.8s ease-in-out infinite;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid rgba(216, 180, 254, 0.55);
+      box-shadow: 0 10px 30px -12px rgba(88, 28, 135, 0.12);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px -12px rgba(192, 38, 211, 0.18);
+      border-color: rgba(232, 121, 249, 0.65);
+    }
+
+    .kpi-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #9333EA, #D946EF, #EC4899);
+      opacity: 0.95;
+    }
+
+    .seg-btn {
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .seg-btn.active {
+      background: linear-gradient(135deg, #A21CAF 0%, #EC4899 100%);
+      color: #FFFFFF;
+      box-shadow: 0 6px 16px -4px rgba(192, 38, 211, 0.45);
+    }
+
+    .chip-btn {
+      transition: all 0.2s ease;
+    }
+
+    .chip-btn.active {
+      background: linear-gradient(135deg, #7E22CE 0%, #C026D3 100%);
+      color: #FFFFFF;
+      border-color: transparent;
+      box-shadow: 0 4px 12px -3px rgba(147, 51, 234, 0.45);
+    }
+
+    .progress-fill {
+      transition: width 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .table-row-interactive {
+      transition: background-color 0.18s ease;
+      cursor: pointer;
+    }
+
+    .table-row-interactive:hover {
+      background-color: #FAF5FF;
+    }
+
+    .table-row-interactive.selected-row {
+      background-color: #FCE7F3;
+    }
+
+    .replay-flash {
+      animation: fadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body id="inicio" class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="hero-gradient text-white shadow-xl">
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Top nav bar -->
+      <div class="flex flex-wrap items-center justify-between gap-4 py-3.5 border-b border-white/15">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-inner">
+            <svg class="w-6 h-6 text-pink-300" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h3.5l2.2-6 4.2 12 2.5-6H21" />
+            </svg>
+          </div>
+          <div>
+            <span class="block text-xs uppercase tracking-wider text-pink-200 font-semibold">RECREACIÓN Y DEPORTE - ELECTIVA I - DOCENTE: NINY LISBETH QUEVEDO MOJICA</span>
+            <span class="block text-base font-bold tracking-tight">Evaluación Física de Laura Mejia</span>
+          </div>
+        </div>
+
+        <nav aria-label="Navegación principal" class="flex flex-wrap items-center gap-1 sm:gap-2 text-sm font-medium">
+          <a href="#resumen" class="px-3 py-1.5 rounded-lg text-purple-100 hover:text-white hover:bg-white/10 transition">Resumen</a>
+          <a href="#graficos" class="px-3 py-1.5 rounded-lg text-purple-100 hover:text-white hover:bg-white/10 transition">Gráficos</a>
+          <a href="#cardio" class="px-3 py-1.5 rounded-lg text-purple-100 hover:text-white hover:bg-white/10 transition">Ruffier</a>
+          <a href="#tabla" class="px-3 py-1.5 rounded-lg text-purple-100 hover:text-white hover:bg-white/10 transition">Datos</a>
+          <a href="#evidencia" class="px-3 py-1.5 rounded-lg text-purple-100 hover:text-white hover:bg-white/10 transition">Evidencia</a>
+        </nav>
+      </div>
+
+      <!-- Hero content -->
+      <div class="py-6 sm:py-7 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-400/20 border border-pink-300/35 text-pink-100 text-xs font-semibold mb-2.5">
+            <span class="w-2 h-2 rounded-full bg-pink-300 animate-pulse"></span>
+            <span id="headerModeBadge">Vista activa: Comparación Tutoría 1 vs. Tutoría 5</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+            Panel Interactivo de Rendimiento Físico
+          </h1>
+          <p class="mt-1.5 text-purple-100/90 text-sm leading-relaxed">
+            Seguimiento integral de resistencia, fuerza con mancuerna de 5 kg, salto longitudinal y respuesta cardiovascular (Test de Ruffier) entre la <strong class="text-white">Tutoría 1</strong> y la <strong class="text-white">Tutoría 5</strong>.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="replayAnimBtn" type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 active:scale-95 border border-white/25 text-white text-sm font-semibold backdrop-blur-md transition cursor-pointer">
+            <svg class="w-4 h-4 text-pink-300" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Reproducir animaciones
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- STICKY MODE SELECTOR BAR -->
+  <div class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-purple-200/70 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-purple-900">
+        <svg class="w-4 h-4 text-fuchsia-600" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        <span>Modo de visualización:</span>
+      </div>
+
+      <div role="tablist" aria-label="Selector de tutoría" class="inline-flex p-1 rounded-xl bg-purple-50 border border-purple-200/80 w-full sm:w-auto justify-center">
+        <button type="button" role="tab" data-mode="compare" aria-selected="true" class="seg-btn active flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-purple-900 cursor-pointer">
+          Comparar T1 vs T5
+        </button>
+        <button type="button" role="tab" data-mode="t1" aria-selected="false" class="seg-btn flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-purple-900 hover:text-fuchsia-700 cursor-pointer">
+          Solo Tutoría 1
+        </button>
+        <button type="button" role="tab" data-mode="t5" aria-selected="false" class="seg-btn flex-1 sm:flex-none px-3.5 sm:px-5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-purple-900 hover:text-pink-600 cursor-pointer">
+          Solo Tutoría 5
+        </button>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4 text-xs font-semibold text-purple-900/80">
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-sm bg-[#A21CAF]"></span> Tutoría 1 (Fucsia)
+        </span>
+        <span class="inline-flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-sm bg-[#F472B6]"></span> Tutoría 5 (Rosa)
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT (SINGLE VIEW) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- COMPACT KPI CARDS SECTION -->
+    <section id="resumen" aria-label="Indicadores clave" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <!-- KPI 1: Test de Cooper -->
+      <article class="glass-card kpi-card rounded-2xl px-4 py-3.5 animate-in delay-1">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Test de Cooper</p>
+            <h2 class="text-[11px] text-slate-400">Vueltas en 12 min</h2>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 flex items-baseline gap-1.5">
+          <span id="kpiCooperValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">30</span>
+          <span class="text-xs font-medium text-slate-500">vueltas</span>
+        </div>
+        <div id="kpiCooperSub" class="mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+          +2 vueltas (+7.1%) vs T1 (28)
+        </div>
+      </article>
+
+      <!-- KPI 2: Volumen total reps/vueltas -->
+      <article class="glass-card kpi-card rounded-2xl px-4 py-3.5 animate-in delay-2">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Volumen Total</p>
+            <h2 class="text-[11px] text-slate-400">Suma reps y vueltas (8 pruebas)</h2>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 flex items-baseline gap-1.5">
+          <span id="kpiVolumeValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">169</span>
+          <span class="text-xs font-medium text-slate-500">total</span>
+        </div>
+        <div id="kpiVolumeSub" class="mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+          +3 (+1.8%) respecto a T1 (166)
+        </div>
+      </article>
+
+      <!-- KPI 3: Salto -->
+      <article class="glass-card kpi-card rounded-2xl px-4 py-3.5 animate-in delay-3">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Salto Longitudinal</p>
+            <h2 class="text-[11px] text-slate-400">Medición en centímetros</h2>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 flex items-baseline gap-1.5">
+          <span id="kpiSaltoValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">107</span>
+          <span class="text-xs font-medium text-slate-500">cm</span>
+        </div>
+        <div id="kpiSaltoSub" class="mt-1.5 text-[11px] font-semibold text-rose-700 bg-rose-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+          -25 cm (-18.9%) vs T1 (132 cm)
+        </div>
+      </article>
+
+      <!-- KPI 4: Índice de Ruffier -->
+      <article class="glass-card kpi-card rounded-2xl px-4 py-3.5 animate-in delay-4">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Índice de Ruffier</p>
+            <h2 class="text-[11px] text-slate-400">((P1+P2+P3) − 200) / 100</h2>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-fuchsia-50 text-pink-600 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 pulse-heart text-pink-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 flex items-baseline gap-1.5">
+          <span id="kpiRuffierValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">0.99</span>
+          <span class="text-xs font-medium text-slate-500">índice</span>
+        </div>
+        <div id="kpiRuffierSub" class="mt-1.5 text-[11px] font-semibold text-purple-700 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+          T1: 0.60 → T5: 0.99 (+0.39)
+        </div>
+      </article>
+    </section>
+
+    <!-- TWO-COLUMN CHARTS & HIGHLIGHTS SECTION -->
+    <section id="graficos" class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start lg:items-stretch">
+
+      <!-- LEFT COLUMN (7 cols): Main Physical Tests Chart (Lines default) + Top Improvements Card -->
+      <div class="lg:col-span-7 flex flex-col gap-5 h-full">
+        <div class="glass-card rounded-2xl p-5 flex flex-col flex-1 justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 border-b border-purple-100">
+            <div>
+              <h2 class="text-lg font-bold text-purple-950">Desempeño en Pruebas Físicas</h2>
+              <p id="mainChartSubtitle" class="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Visualización en líneas — Tutoría 1 vs. Tutoría 5
+              </p>
+            </div>
+
+            <!-- Chart Type Toggle (Líneas active by default) -->
+            <div class="inline-flex items-center gap-1 p-1 rounded-xl bg-purple-50 border border-purple-200/70 self-start sm:self-auto">
+              <button type="button" data-chart-type="bar" class="chart-type-btn seg-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-900 cursor-pointer flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6m6 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14" />
+                </svg>
+                Barras
+              </button>
+              <button type="button" data-chart-type="line" class="chart-type-btn seg-btn active px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-900 cursor-pointer flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
+                </svg>
+                Líneas
+              </button>
+            </div>
+          </div>
+
+          <!-- Category filter chips -->
+          <div class="flex flex-wrap items-center gap-2 py-3.5">
+            <button type="button" data-chart-cat="all_reps" class="chart-cat-btn chip-btn active px-3 py-1.5 rounded-full text-xs font-semibold border border-purple-200 bg-white text-purple-900 cursor-pointer">
+              Todas (Reps y Vueltas)
+            </button>
+            <button type="button" data-chart-cat="resistencia" class="chart-cat-btn chip-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-purple-200 bg-white text-purple-900 hover:border-fuchsia-400 cursor-pointer">
+              Resistencia y Core
+            </button>
+            <button type="button" data-chart-cat="fuerza" class="chart-cat-btn chip-btn px-3 py-1.5 rounded-full text-xs font-semibold border border-purple-200 bg-white text-purple-900 hover:border-fuchsia-400 cursor-pointer">
+              Fuerza (Mancuerna 5kg)
+            </button>
+          </div>
+
+          <!-- Fixed height chart container -->
+          <div class="relative h-80 lg:h-[440px] w-full mt-1">
+            <canvas id="mainPhysicalChart"></canvas>
+          </div>
+
+          <p class="mt-3.5 text-xs text-slate-500 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-fuchsia-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>El Salto (cm) se presenta en su gráfico independiente para preservar una escala visual clara.</span>
+          </p>
+        </div>
+
+        <!-- Top Highlights Card (Bottom Left - Lilac/Fuchsia Gradient) -->
+        <div class="rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-[#3B0764] via-[#6B21A8] to-[#BE185D] text-white shadow-lg">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-pink-300/20 border border-pink-200/40 text-pink-100 text-xs font-semibold mb-3">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            Avances Destacados · Tutoría 1 a Tutoría 5
+          </div>
+          <h3 class="text-base sm:text-lg font-bold leading-snug">Progreso sostenido en resistencia aeróbica y fuerza de brazos</h3>
+          <p class="mt-1.5 text-xs sm:text-sm text-purple-100 leading-relaxed">
+            Se incrementó el volumen total de repeticiones y vueltas de <strong class="text-white">166 a 169</strong>, con mejoras sobresalientes en tren superior y resistencia:
+          </p>
+
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15">
+              <span class="text-xs font-medium text-purple-100">Trícep (5kg)</span>
+              <span class="text-xs font-bold text-pink-200">23 → 31 (+34.8%)</span>
+            </div>
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15">
+              <span class="text-xs font-medium text-purple-100">Bícep (5kg)</span>
+              <span class="text-xs font-bold text-pink-200">10 → 12 (+20.0%)</span>
+            </div>
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15">
+              <span class="text-xs font-medium text-purple-100">Test de Cooper</span>
+              <span class="text-xs font-bold text-pink-200">28 → 30 (+7.1%)</span>
+            </div>
+            <div class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white/10 border border-white/15">
+              <span class="text-xs font-medium text-purple-100">Sentadillas</span>
+              <span class="text-xs font-bold text-pink-200">26 → 27 (+3.8%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN (5 cols): Salto Longitudinal + Cardiovascular & Ruffier -->
+      <div class="lg:col-span-5 flex flex-col gap-5">
+        <!-- Salto dedicated chart -->
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-bold text-purple-950">Salto Longitudinal (cm)</h2>
+              <p class="text-xs text-slate-500">Medición en centímetros</p>
+            </div>
+            <span id="saltoDeltaBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700">-25 cm (-18.9%)</span>
+          </div>
+          <div class="relative h-48 w-full">
+            <canvas id="saltoChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Cardiovascular & Ruffier Card -->
+        <div id="cardio" class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex items-start gap-2.5 pb-3 border-b border-purple-100">
+            <div class="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-4 h-4 pulse-heart" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h3.5l2.2-6 4.2 12 2.5-6H21" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-base font-bold text-purple-950 leading-tight">Respuesta Cardiovascular y Test de Ruffier</h2>
+              <p class="text-[11px] text-slate-500 mt-0.5">Curva de frecuencia cardíaca (Pulso 1 reposo → Pulso 2 esfuerzo → Pulso 3 recuperación)</p>
+            </div>
+          </div>
+
+          <!-- Pulse line chart -->
+          <div class="relative h-52 w-full">
+            <canvas id="ruffierChart"></canvas>
+          </div>
+
+          <!-- Formula pill -->
+          <div class="flex justify-end">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200/70">
+              Fórmula Excel: ((P1 + P2 + P3) − 200) / 100
+            </span>
+          </div>
+
+          <!-- 3 Pulse readout cards -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <div class="p-2.5 rounded-xl bg-purple-50/60 border border-purple-200/60 text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-purple-600">Pulso 1</p>
+              <p class="text-[10px] text-slate-400">Reposo</p>
+              <p id="p1Readout" class="mt-1 text-sm sm:text-base font-extrabold text-purple-950 tabular-nums">75 / 80</p>
+              <p class="text-[10px] text-slate-500">lpm</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-fuchsia-50/60 border border-fuchsia-200/60 text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-fuchsia-700">Pulso 2</p>
+              <p class="text-[10px] text-slate-400">Esfuerzo</p>
+              <p id="p2Readout" class="mt-1 text-sm sm:text-base font-extrabold text-fuchsia-700 tabular-nums">100 / 134</p>
+              <p class="text-[10px] text-slate-500">lpm</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-pink-50/70 border border-pink-200/70 text-center">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-pink-600">Pulso 3</p>
+              <p class="text-[10px] text-slate-400">Recuperación</p>
+              <p id="p3Readout" class="mt-1 text-sm sm:text-base font-extrabold text-pink-600 tabular-nums">85 / 85</p>
+              <p class="text-[10px] text-slate-500">lpm</p>
+            </div>
+          </div>
+
+          <!-- Ruffier Insight Box -->
+          <div class="p-3.5 rounded-xl bg-purple-50/80 border border-purple-200/70">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-purple-900">Resultado Índice de Ruffier</span>
+              <span id="ruffierComparePill" class="text-[11px] font-bold text-fuchsia-700 bg-white px-2.5 py-0.5 rounded-full border border-fuchsia-200">T1: 0.60 · T5: 0.99</span>
+            </div>
+            <p class="mt-1.5 text-xs text-slate-700 leading-relaxed">
+              Aunque en la Tutoría 5 el <strong>Pulso 2</strong> alcanzó <strong>134 lpm</strong> tras un mayor esfuerzo, Laura mantuvo exactamente el mismo <strong>Pulso 3 de recuperación (85 lpm)</strong> que en la Tutoría 1, bajando 49 lpm en un minuto.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- DETAILED TABLE SECTION (NO OBSERVACIONES COLUMN) -->
+    <section id="tabla" class="glass-card rounded-2xl p-5 sm:p-6">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-purple-100">
+        <div>
+          <h2 class="text-lg font-bold text-purple-950">Detalle Completo de Pruebas</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Haz clic en cualquier fila para resaltar la comparativa de esa prueba</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="tableCategorySelect" aria-label="Filtrar por categoría" class="px-3 py-2 rounded-xl border border-purple-200 bg-purple-50/60 text-xs sm:text-sm font-medium text-purple-900 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 cursor-pointer">
+            <option value="all">Todas las categorías (13)</option>
+            <option value="resistencia">Resistencia y Core (5)</option>
+            <option value="fuerza">Fuerza — Mancuerna 5kg (3)</option>
+            <option value="salto">Salto (1)</option>
+            <option value="cardio">Cardiovascular y Ruffier (4)</option>
+          </select>
+
+          <select id="tableStatusSelect" aria-label="Filtrar por estado" class="px-3 py-2 rounded-xl border border-purple-200 bg-purple-50/60 text-xs sm:text-sm font-medium text-purple-900 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 cursor-pointer">
+            <option value="all">Todos los estados</option>
+            <option value="improved">Mejoró en T5</option>
+            <option value="decreased">Disminuyó en T5</option>
+            <option value="stable">Estable / Cardiovascular</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Interactive Spotlight Banner -->
+      <div id="spotlightCard" class="mt-5 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50/70 to-white border border-purple-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-gradient-to-r from-fuchsia-600 to-pink-500 text-white">Prueba seleccionada</span>
+            <span id="spotCategory" class="text-xs font-semibold text-purple-700">Resistencia y Core</span>
+          </div>
+          <h3 id="spotTitle" class="mt-1.5 text-base sm:text-lg font-extrabold text-purple-950">Test de Cooper (Vueltas en 12m)</h3>
+          <p id="spotMeta" class="mt-1 text-xs sm:text-sm text-slate-600">Unidad de medida: vueltas · Comparativa directa entre Tutoría 1 y Tutoría 5.</p>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-5 shrink-0">
+          <div class="text-center px-3.5 py-2 rounded-xl bg-white border border-purple-200/70 shadow-sm min-w-[84px]">
+            <span class="block text-[11px] font-semibold text-slate-400">Tutoría 1</span>
+            <span id="spotT1" class="text-lg font-extrabold text-[#A21CAF] tabular-nums">28</span>
+          </div>
+          <div class="text-purple-400 font-bold">→</div>
+          <div class="text-center px-3.5 py-2 rounded-xl bg-white border border-pink-200/80 shadow-sm min-w-[84px]">
+            <span class="block text-[11px] font-semibold text-slate-400">Tutoría 5</span>
+            <span id="spotT5" class="text-lg font-extrabold text-[#EC4899] tabular-nums">30</span>
+          </div>
+          <div class="text-center px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-700 to-fuchsia-600 text-white shadow-sm min-w-[96px]">
+            <span class="block text-[11px] font-medium text-purple-100">Variación</span>
+            <span id="spotDiff" class="text-sm sm:text-base font-extrabold tabular-nums">+2 (+7.1%)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Responsive Table (NO Observaciones column) -->
+      <div class="mt-5 overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-purple-200/80 text-[11px] uppercase tracking-wider text-purple-700 font-bold">
+              <th class="py-3 px-3">Prueba / Ítem</th>
+              <th id="thT1" class="py-3 px-3 text-right">Tutoría 1</th>
+              <th id="thT5" class="py-3 px-3 text-right">Tutoría 5</th>
+              <th id="thDiff" class="py-3 px-3 text-center">Variación</th>
+              <th class="py-3 px-3 hidden sm:table-cell">Progreso relativo</th>
+            </tr>
+          </thead>
+          <tbody id="dataTableBody" class="divide-y divide-purple-100/80 text-sm">
+            <!-- Populated dynamically by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- EVIDENCE PHOTO GALLERY (DISPLAY ONLY: l1.webp & l2.webp) -->
+    <section id="evidencia" class="glass-card rounded-2xl p-5 sm:p-6 space-y-5">
+      <div class="pb-3.5 border-b border-purple-100">
+        <h2 class="text-lg font-bold text-purple-950">Evidencia Fotográfica</h2>
+        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Registro visual de las sesiones de evaluación física</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <!-- Foto 1: l1.webp -->
+        <figure class="rounded-2xl border border-purple-200/80 bg-white overflow-hidden shadow-sm">
+          <div class="px-4 py-2.5 bg-gradient-to-r from-[#5B21B6] to-[#A21CAF] text-white flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-pink-300"></span>
+              Evidencia 1 · Tutoría 1
+            </span>
+          </div>
+          <div class="p-3 bg-purple-50/40">
+            <img id="lauraImg1" alt="Evidencia fotográfica 1 de Laura Mejia" class="hidden w-full h-auto block rounded-xl object-contain cursor-zoom-in transition duration-300 hover:opacity-95" />
+            <div id="lauraPlaceholder1" class="rounded-xl border-2 border-dashed border-purple-200 bg-white/80 px-6 py-12 text-center">
+              <p class="text-sm font-bold text-purple-900">Espacio para l1.webp</p>
+              <p class="mt-1 text-xs text-slate-500">Guarda <strong>l1.webp</strong> junto a este archivo HTML para mostrarla aquí automáticamente.</p>
+            </div>
+          </div>
+        </figure>
+
+        <!-- Foto 2: l2.webp -->
+        <figure class="rounded-2xl border border-pink-200/80 bg-white overflow-hidden shadow-sm">
+          <div class="px-4 py-2.5 bg-gradient-to-r from-[#A21CAF] to-[#EC4899] text-white flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-bold flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-white"></span>
+              Evidencia 2 · Tutoría 5
+            </span>
+          </div>
+          <div class="p-3 bg-pink-50/40">
+            <img id="lauraImg2" alt="Evidencia fotográfica 2 de Laura Mejia" class="hidden w-full h-auto block rounded-xl object-contain cursor-zoom-in transition duration-300 hover:opacity-95" />
+            <div id="lauraPlaceholder2" class="rounded-xl border-2 border-dashed border-pink-200 bg-white/80 px-6 py-12 text-center">
+              <p class="text-sm font-bold text-purple-900">Espacio para l2.webp</p>
+              <p class="mt-1 text-xs text-slate-500">Guarda <strong>l2.webp</strong> junto a este archivo HTML para mostrarla aquí automáticamente.</p>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- LIGHTBOX MODAL FOR EVIDENCE PHOTOS -->
+  <div id="lightboxModal" class="hidden fixed inset-0 z-50 bg-purple-950/85 backdrop-blur-sm p-4 flex items-center justify-center">
+    <div class="relative max-w-4xl w-full bg-[#2E1065] rounded-2xl overflow-hidden border border-white/15 shadow-2xl">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/10 text-white">
+        <span id="lightboxCaption" class="text-sm font-bold">Evidencia Fotográfica</span>
+        <button id="closeLightboxBtn" type="button" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold cursor-pointer">
+          Cerrar ✕
+        </button>
+      </div>
+      <div class="p-4 flex items-center justify-center bg-purple-950/60">
+        <img id="lightboxImg" alt="Vista ampliada de evidencia" class="max-h-[78vh] max-w-full h-auto rounded-lg object-contain" />
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#2E1065] text-purple-200 mt-10 border-t border-purple-800/70">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-center sm:text-left">
+        <div class="flex items-center justify-center sm:justify-start gap-2 text-white font-bold text-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-pink-400"></span>
+          <span>Dashboard de Evaluación Física · Recreación y Deporte</span>
+        </div>
+        <p class="mt-1 text-xs text-purple-300/90">
+          Datos procesados de <span class="text-pink-300 font-medium">Test Laura.xlsx</span> (Tutoría 1 y Tutoría 5) · Fórmula Ruffier: ((P1+P2+P3) − 200) / 100
+        </p>
+      </div>
+
+      <a href="#inicio" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition">
+        <svg class="w-3.5 h-3.5 text-pink-300" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+        </svg>
+        Volver arriba
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // Exact verified dataset from Test Laura.xlsx (Hoja1) — without observaciones columns
+      const TEST_DATA = [
+        {
+          id: 'cooper',
+          name: 'Test de Cooper (Vueltas en 12m)',
+          shortName: 'Test de Cooper',
+          category: 'resistencia',
+          categoryLabel: 'Resistencia y Core',
+          unit: 'vueltas',
+          t1: 28,
+          t5: 30,
+          trend: 'improved'
+        },
+        {
+          id: 'abdominales',
+          name: 'Abdominales',
+          shortName: 'Abdominales',
+          category: 'resistencia',
+          categoryLabel: 'Resistencia y Core',
+          unit: 'reps',
+          t1: 16,
+          t5: 12,
+          trend: 'decreased'
+        },
+        {
+          id: 'dorsales',
+          name: 'Dorsales',
+          shortName: 'Dorsales',
+          category: 'resistencia',
+          categoryLabel: 'Resistencia y Core',
+          unit: 'reps',
+          t1: 31,
+          t5: 30,
+          trend: 'decreased'
+        },
+        {
+          id: 'semiburpies',
+          name: 'Semi Burpies',
+          shortName: 'Semi Burpies',
+          category: 'resistencia',
+          categoryLabel: 'Resistencia y Core',
+          unit: 'reps',
+          t1: 14,
+          t5: 13,
+          trend: 'decreased'
+        },
+        {
+          id: 'salto',
+          name: 'Salto',
+          shortName: 'Salto',
+          category: 'salto',
+          categoryLabel: 'Potencia (Salto)',
+          unit: 'cm',
+          t1: 132,
+          t5: 107,
+          trend: 'decreased'
+        },
+        {
+          id: 'sentadillas',
+          name: 'Sentadillas',
+          shortName: 'Sentadillas',
+          category: 'resistencia',
+          categoryLabel: 'Resistencia y Core',
+          unit: 'reps',
+          t1: 26,
+          t5: 27,
+          trend: 'improved'
+        },
+        {
+          id: 'bicep',
+          name: 'Bicep (Con mancuerna de 5kg)',
+          shortName: 'Bícep (5kg)',
+          category: 'fuerza',
+          categoryLabel: 'Fuerza (Mancuerna 5kg)',
+          unit: 'reps',
+          t1: 10,
+          t5: 12,
+          trend: 'improved'
+        },
+        {
+          id: 'tricep',
+          name: 'Tricep (Con mancuerna de 5kg)',
+          shortName: 'Trícep (5kg)',
+          category: 'fuerza',
+          categoryLabel: 'Fuerza (Mancuerna 5kg)',
+          unit: 'reps',
+          t1: 23,
+          t5: 31,
+          trend: 'improved'
+        },
+        {
+          id: 'hombro',
+          name: 'Hombro (Con mancuerna de 5kg)',
+          shortName: 'Hombro (5kg)',
+          category: 'fuerza',
+          categoryLabel: 'Fuerza (Mancuerna 5kg)',
+          unit: 'reps',
+          t1: 18,
+          t5: 14,
+          trend: 'decreased'
+        },
+        {
+          id: 'pulso1',
+          name: 'Pulso 1 (Reposo)',
+          shortName: 'Pulso 1',
+          category: 'cardio',
+          categoryLabel: 'Cardiovascular',
+          unit: 'lpm',
+          t1: 75,
+          t5: 80,
+          trend: 'stable'
+        },
+        {
+          id: 'pulso2',
+          name: 'Pulso 2 (Esfuerzo)',
+          shortName: 'Pulso 2',
+          category: 'cardio',
+          categoryLabel: 'Cardiovascular',
+          unit: 'lpm',
+          t1: 100,
+          t5: 134,
+          trend: 'stable'
+        },
+        {
+          id: 'pulso3',
+          name: 'Pulso 3 (Recuperación)',
+          shortName: 'Pulso 3',
+          category: 'cardio',
+          categoryLabel: 'Cardiovascular',
+          unit: 'lpm',
+          t1: 85,
+          t5: 85,
+          trend: 'stable'
+        },
+        {
+          id: 'ruffier',
+          name: 'Índice de Ruffier ((P1+P2+P3)-200)/100',
+          shortName: 'Ruffier',
+          category: 'cardio',
+          categoryLabel: 'Cardiovascular',
+          unit: 'índice',
+          t1: 0.6,
+          t5: 0.99,
+          trend: 'stable',
+          decimals: 2
+        }
+      ];
+
+      const state = {
+        viewMode: 'compare',      // 'compare' | 't1' | 't5'
+        chartType: 'line',        // Default 'line'
+        chartCategory: 'all_reps', // 'all_reps' | 'resistencia' | 'fuerza'
+        tableCategory: 'all',
+        tableStatus: 'all',
+        selectedItemId: 'cooper'
+      };
+
+      // Fuchsia (Tutoría 1) + Rose Pink (Tutoría 5) on Lilac theme
+      const COLORS = {
+        t1Solid: '#A21CAF',
+        t1Fill: 'rgba(162, 28, 175, 0.85)',
+        t1Area: 'rgba(192, 38, 211, 0.16)',
+        t5Solid: '#EC4899',
+        t5Fill: 'rgba(244, 114, 182, 0.90)',
+        t5Area: 'rgba(236, 72, 153, 0.18)'
+      };
+
+      let mainChart = null;
+      let saltoChart = null;
+      let ruffierChart = null;
+      const counterFrames = new Map();
+
+      function formatValue(val, decimals) {
+        if (decimals) return Number(val).toFixed(decimals);
+        return String(val);
+      }
+
+      function computeDiffText(item) {
+        const diff = item.t5 - item.t1;
+        const sign = diff > 0 ? '+' : '';
+        if (item.decimals) {
+          return `${sign}${diff.toFixed(item.decimals)}`;
+        }
+        if (diff === 0) {
+          return '0 (Igual)';
+        }
+        const pct = ((diff / item.t1) * 100).toFixed(1);
+        return `${sign}${diff} (${sign}${pct}%)`;
+      }
+
+      function animateCounter(el, targetValue, decimals) {
+        if (!el) return;
+        if (counterFrames.has(el)) {
+          cancelAnimationFrame(counterFrames.get(el));
+        }
+        const duration = 680;
+        const startTime = performance.now();
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = targetValue * eased;
+          el.textContent = decimals ? current.toFixed(decimals) : Math.round(current).toString();
+          if (progress < 1) {
+            counterFrames.set(el, requestAnimationFrame(step));
+          } else {
+            el.textContent = decimals ? targetValue.toFixed(decimals) : String(targetValue);
+            counterFrames.delete(el);
+          }
+        }
+        counterFrames.set(el, requestAnimationFrame(step));
+      }
+
+      function getRepsVolume(key) {
+        return TEST_DATA
+          .filter(d => d.category === 'resistencia' || d.category === 'fuerza')
+          .reduce((acc, item) => acc + item[key], 0);
+      }
+
+      function updateHeaderAndKpis() {
+        const badge = document.getElementById('headerModeBadge');
+        const modeLabels = {
+          compare: 'Vista activa: Comparación Tutoría 1 vs. Tutoría 5',
+          t1: 'Vista activa: Solo Tutoría 1 (Evaluación Inicial)',
+          t5: 'Vista activa: Solo Tutoría 5 (Evaluación Final)'
+        };
+        badge.textContent = modeLabels[state.viewMode];
+
+        const cooper = TEST_DATA.find(d => d.id === 'cooper');
+        const salto = TEST_DATA.find(d => d.id === 'salto');
+        const ruffier = TEST_DATA.find(d => d.id === 'ruffier');
+        const volT1 = getRepsVolume('t1'); // 166
+        const volT5 = getRepsVolume('t5'); // 169
+
+        const kpiCooperVal = document.getElementById('kpiCooperValue');
+        const kpiCooperSub = document.getElementById('kpiCooperSub');
+        const kpiVolVal = document.getElementById('kpiVolumeValue');
+        const kpiVolSub = document.getElementById('kpiVolumeSub');
+        const kpiSaltoVal = document.getElementById('kpiSaltoValue');
+        const kpiSaltoSub = document.getElementById('kpiSaltoSub');
+        const kpiRuffierVal = document.getElementById('kpiRuffierValue');
+        const kpiRuffierSub = document.getElementById('kpiRuffierSub');
+
+        if (state.viewMode === 't1') {
+          animateCounter(kpiCooperVal, cooper.t1, 0);
+          kpiCooperSub.className = 'mt-1.5 text-[11px] font-semibold text-fuchsia-800 bg-fuchsia-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiCooperSub.textContent = 'Tutoría 1 · Registro inicial';
+
+          animateCounter(kpiVolVal, volT1, 0);
+          kpiVolSub.className = 'mt-1.5 text-[11px] font-semibold text-fuchsia-800 bg-fuchsia-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiVolSub.textContent = 'Tutoría 1 · 8 pruebas de reps/vueltas';
+
+          animateCounter(kpiSaltoVal, salto.t1, 0);
+          kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-800 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiSaltoSub.textContent = 'Tutoría 1 · Registro inicial';
+
+          animateCounter(kpiRuffierVal, ruffier.t1, 2);
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-800 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'Tutoría 1 · P1:75 · P2:100 · P3:85';
+        } else if (state.viewMode === 't5') {
+          animateCounter(kpiCooperVal, cooper.t5, 0);
+          kpiCooperSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiCooperSub.textContent = 'Tutoría 5 · Registro final';
+
+          animateCounter(kpiVolVal, volT5, 0);
+          kpiVolSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiVolSub.textContent = 'Tutoría 5 · 8 pruebas de reps/vueltas';
+
+          animateCounter(kpiSaltoVal, salto.t5, 0);
+          kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiSaltoSub.textContent = 'Tutoría 5 · Registro final';
+
+          animateCounter(kpiRuffierVal, ruffier.t5, 2);
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'Tutoría 5 · P1:80 · P2:134 · P3:85';
+        } else {
+          animateCounter(kpiCooperVal, cooper.t5, 0);
+          kpiCooperSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiCooperSub.textContent = '+2 vueltas (+7.1%) vs T1 (28)';
+
+          animateCounter(kpiVolVal, volT5, 0);
+          kpiVolSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiVolSub.textContent = '+3 (+1.8%) respecto a T1 (166)';
+
+          animateCounter(kpiSaltoVal, salto.t5, 0);
+          kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-rose-700 bg-rose-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiSaltoSub.textContent = '-25 cm (-18.9%) vs T1 (132 cm)';
+
+          animateCounter(kpiRuffierVal, ruffier.t5, 2);
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-700 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'T1: 0.60 → T5: 0.99 (+0.39)';
+        }
+
+        // Salto badge
+        const saltoBadge = document.getElementById('saltoDeltaBadge');
+        if (state.viewMode === 't1') {
+          saltoBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-fuchsia-50 text-fuchsia-800';
+          saltoBadge.textContent = 'T1: 132 cm';
+        } else if (state.viewMode === 't5') {
+          saltoBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-pink-50 text-pink-700';
+          saltoBadge.textContent = 'T5: 107 cm';
+        } else {
+          saltoBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700';
+          saltoBadge.textContent = '-25 cm (-18.9%)';
+        }
+
+        // Ruffier readouts
+        const p1El = document.getElementById('p1Readout');
+        const p2El = document.getElementById('p2Readout');
+        const p3El = document.getElementById('p3Readout');
+        const rPill = document.getElementById('ruffierComparePill');
+        if (state.viewMode === 't1') {
+          p1El.textContent = '75';
+          p2El.textContent = '100';
+          p3El.textContent = '85';
+          rPill.textContent = 'Solo T1: 0.60';
+        } else if (state.viewMode === 't5') {
+          p1El.textContent = '80';
+          p2El.textContent = '134';
+          p3El.textContent = '85';
+          rPill.textContent = 'Solo T5: 0.99';
+        } else {
+          p1El.textContent = '75 / 80';
+          p2El.textContent = '100 / 134';
+          p3El.textContent = '85 / 85';
+          rPill.textContent = 'T1: 0.60 · T5: 0.99';
+        }
+      }
+
+      function getFilteredMainItems() {
+        if (state.chartCategory === 'resistencia') {
+          return TEST_DATA.filter(d => d.category === 'resistencia');
+        }
+        if (state.chartCategory === 'fuerza') {
+          return TEST_DATA.filter(d => d.category === 'fuerza');
+        }
+        return TEST_DATA.filter(d => d.category === 'resistencia' || d.category === 'fuerza');
+      }
+
+      function renderMainChart() {
+        const ctx = document.getElementById('mainPhysicalChart').getContext('2d');
+        const items = getFilteredMainItems();
+        const labels = items.map(d => d.shortName);
+
+        const subtitleEl = document.getElementById('mainChartSubtitle');
+        const modeDesc = state.viewMode === 'compare'
+          ? 'Tutoría 1 vs. Tutoría 5'
+          : state.viewMode === 't1' ? 'Solo Tutoría 1' : 'Solo Tutoría 5';
+        subtitleEl.textContent = `Visualización en ${state.chartType === 'bar' ? 'barras' : 'líneas'} — ${modeDesc}`;
+
+        const datasets = [];
+        const isLine = state.chartType === 'line';
+
+        if (state.viewMode === 'compare' || state.viewMode === 't1') {
+          datasets.push({
+            label: 'Tutoría 1',
+            data: items.map(d => d.t1),
+            backgroundColor: isLine ? COLORS.t1Area : COLORS.t1Fill,
+            borderColor: COLORS.t1Solid,
+            borderWidth: isLine ? 3 : 0,
+            borderRadius: isLine ? 0 : 8,
+            fill: isLine,
+            tension: 0.35,
+            pointRadius: isLine ? 5 : 0,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: COLORS.t1Solid,
+            pointBorderWidth: 2.5
+          });
+        }
+
+        if (state.viewMode === 'compare' || state.viewMode === 't5') {
+          datasets.push({
+            label: 'Tutoría 5',
+            data: items.map(d => d.t5),
+            backgroundColor: isLine ? COLORS.t5Area : COLORS.t5Fill,
+            borderColor: COLORS.t5Solid,
+            borderWidth: isLine ? 3 : 0,
+            borderRadius: isLine ? 0 : 8,
+            fill: isLine,
+            tension: 0.35,
+            pointRadius: isLine ? 5 : 0,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: COLORS.t5Solid,
+            pointBorderWidth: 2.5
+          });
+        }
+
+        if (mainChart) {
+          mainChart.destroy();
+        }
+
+        mainChart = new Chart(ctx, {
+          type: state.chartType,
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            animation: {
+              duration: 850,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 10,
+                  font: { family: 'Inter', size: 12, weight: '600' },
+                  color: '#4C1D95'
+                }
+              },
+              tooltip: {
+                backgroundColor: '#2E1065',
+                titleFont: { family: 'Inter', size: 13, weight: '700' },
+                bodyFont: { family: 'Inter', size: 12 },
+                padding: 12,
+                cornerRadius: 10
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  font: { family: 'Inter', size: 11, weight: '600' },
+                  color: '#5B21B6'
+                }
+              },
+              y: {
+                beginAtZero: true,
+                suggestedMax: 36,
+                grid: { color: 'rgba(192, 132, 252, 0.22)' },
+                ticks: {
+                  font: { family: 'Inter', size: 11 },
+                  color: '#6B7280'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderSaltoChart() {
+        const ctx = document.getElementById('saltoChart').getContext('2d');
+        const salto = TEST_DATA.find(d => d.id === 'salto');
+
+        const labels = [];
+        const data = [];
+        const bgColors = [];
+
+        if (state.viewMode === 'compare' || state.viewMode === 't1') {
+          labels.push('Tutoría 1');
+          data.push(salto.t1);
+          bgColors.push(COLORS.t1Fill);
+        }
+        if (state.viewMode === 'compare' || state.viewMode === 't5') {
+          labels.push('Tutoría 5');
+          data.push(salto.t5);
+          bgColors.push(COLORS.t5Fill);
+        }
+
+        if (saltoChart) {
+          saltoChart.destroy();
+        }
+
+        saltoChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Salto (cm)',
+              data,
+              backgroundColor: bgColors,
+              borderRadius: 10,
+              maxBarThickness: 56
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 850, easing: 'easeOutQuart' },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#2E1065',
+                padding: 10,
+                cornerRadius: 10,
+                callbacks: {
+                  label: (c) => `${c.parsed.y} cm`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Inter', size: 12, weight: '600' }, color: '#4C1D95' }
+              },
+              y: {
+                beginAtZero: true,
+                suggestedMax: 150,
+                grid: { color: 'rgba(192, 132, 252, 0.22)' },
+                ticks: {
+                  font: { family: 'Inter', size: 11 },
+                  color: '#6B7280',
+                  callback: (v) => v + ' cm'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderRuffierChart() {
+        const ctx = document.getElementById('ruffierChart').getContext('2d');
+        const labels = ['Pulso 1 (Reposo)', 'Pulso 2 (Esfuerzo)', 'Pulso 3 (Recuperación)'];
+        const datasets = [];
+
+        if (state.viewMode === 'compare' || state.viewMode === 't1') {
+          datasets.push({
+            label: 'Tutoría 1 (Ruffier 0.60)',
+            data: [75, 100, 85],
+            borderColor: COLORS.t1Solid,
+            backgroundColor: COLORS.t1Area,
+            borderWidth: 2.8,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: COLORS.t1Solid,
+            pointBorderWidth: 2.5
+          });
+        }
+
+        if (state.viewMode === 'compare' || state.viewMode === 't5') {
+          datasets.push({
+            label: 'Tutoría 5 (Ruffier 0.99)',
+            data: [80, 134, 85],
+            borderColor: COLORS.t5Solid,
+            backgroundColor: COLORS.t5Area,
+            borderWidth: 2.8,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: '#FFFFFF',
+            pointBorderColor: COLORS.t5Solid,
+            pointBorderWidth: 2.5
+          });
+        }
+
+        if (ruffierChart) {
+          ruffierChart.destroy();
+        }
+
+        ruffierChart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            animation: { duration: 900, easing: 'easeOutQuart' },
+            plugins: {
+              legend: {
+                position: 'top',
+                align: 'start',
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 8,
+                  font: { family: 'Inter', size: 11, weight: '600' },
+                  color: '#4C1D95'
+                }
+              },
+              tooltip: {
+                backgroundColor: '#2E1065',
+                padding: 10,
+                cornerRadius: 10,
+                callbacks: {
+                  label: (c) => `${c.dataset.label}: ${c.parsed.y} lpm`
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Inter', size: 10, weight: '600' }, color: '#5B21B6' }
+              },
+              y: {
+                min: 60,
+                max: 150,
+                grid: { color: 'rgba(192, 132, 252, 0.22)' },
+                ticks: {
+                  font: { family: 'Inter', size: 10 },
+                  color: '#6B7280',
+                  callback: (v) => v + ' lpm'
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderSpotlight() {
+        const item = TEST_DATA.find(d => d.id === state.selectedItemId) || TEST_DATA[0];
+        document.getElementById('spotCategory').textContent = item.categoryLabel;
+        document.getElementById('spotTitle').textContent = item.name;
+        document.getElementById('spotMeta').textContent = `Unidad de medida: ${item.unit} · Comparativa directa entre Tutoría 1 y Tutoría 5.`;
+
+        document.getElementById('spotT1').textContent = `${formatValue(item.t1, item.decimals)} ${item.unit === 'índice' ? '' : item.unit}`.trim();
+        document.getElementById('spotT5').textContent = `${formatValue(item.t5, item.decimals)} ${item.unit === 'índice' ? '' : item.unit}`.trim();
+        document.getElementById('spotDiff').textContent = computeDiffText(item);
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById('dataTableBody');
+        const thT1 = document.getElementById('thT1');
+        const thT5 = document.getElementById('thT5');
+        const thDiff = document.getElementById('thDiff');
+
+        const showT1 = state.viewMode === 'compare' || state.viewMode === 't1';
+        const showT5 = state.viewMode === 'compare' || state.viewMode === 't5';
+        const showDiff = state.viewMode === 'compare';
+
+        thT1.style.display = showT1 ? '' : 'none';
+        thT5.style.display = showT5 ? '' : 'none';
+        thDiff.style.display = showDiff ? '' : 'none';
+
+        const filtered = TEST_DATA.filter(item => {
+          if (state.tableCategory !== 'all' && item.category !== state.tableCategory) return false;
+          if (state.tableStatus === 'improved' && item.trend !== 'improved') return false;
+          if (state.tableStatus === 'decreased' && item.trend !== 'decreased') return false;
+          if (state.tableStatus === 'stable' && item.trend !== 'stable') return false;
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="py-8 text-center text-slate-500 text-sm">
+                No hay pruebas que coincidan con el filtro seleccionado.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(item => {
+          const isSelected = item.id === state.selectedItemId;
+          const maxVal = Math.max(item.t1, item.t5, 1);
+          const pctT1 = Math.round((item.t1 / maxVal) * 100);
+          const pctT5 = Math.round((item.t5 / maxVal) * 100);
+
+          let badgeClass = 'bg-purple-50 text-purple-700';
+          if (item.trend === 'improved') badgeClass = 'bg-emerald-50 text-emerald-700';
+          else if (item.trend === 'decreased') badgeClass = 'bg-rose-50 text-rose-700';
+
+          const progressHtml = `
+            <div class="space-y-1.5 min-w-[130px]">
+              ${showT1 ? `<div class="h-2 rounded-full bg-purple-100/70 overflow-hidden"><div class="progress-fill h-full rounded-full bg-[#A21CAF]" style="width:${pctT1}%"></div></div>` : ''}
+              ${showT5 ? `<div class="h-2 rounded-full bg-pink-100/70 overflow-hidden"><div class="progress-fill h-full rounded-full bg-[#EC4899]" style="width:${pctT5}%"></div></div>` : ''}
+            </div>
+          `;
+
+          return `
+            <tr data-item-id="${item.id}" class="table-row-interactive ${isSelected ? 'selected-row' : ''}">
+              <td class="py-3.5 px-3">
+                <div class="font-semibold text-purple-950">${item.name}</div>
+                <div class="text-[11px] text-slate-500">${item.categoryLabel}</div>
+              </td>
+              <td class="py-3.5 px-3 text-right font-bold text-[#A21CAF] tabular-nums" style="${showT1 ? '' : 'display:none'}">
+                ${formatValue(item.t1, item.decimals)}
+              </td>
+              <td class="py-3.5 px-3 text-right font-bold text-[#EC4899] tabular-nums" style="${showT5 ? '' : 'display:none'}">
+                ${formatValue(item.t5, item.decimals)}
+              </td>
+              <td class="py-3.5 px-3 text-center" style="${showDiff ? '' : 'display:none'}">
+                <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-bold tabular-nums ${badgeClass}">
+                  ${computeDiffText(item)}
+                </span>
+              </td>
+              <td class="py-3.5 px-3 hidden sm:table-cell">${progressHtml}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      function renderAll() {
+        updateHeaderAndKpis();
+        renderMainChart();
+        renderSaltoChart();
+        renderRuffierChart();
+        renderSpotlight();
+        renderTable();
+      }
+
+      function bindEvents() {
+        // View mode buttons
+        document.querySelectorAll('[data-mode]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const newMode = btn.getAttribute('data-mode');
+            if (newMode === state.viewMode) return;
+            state.viewMode = newMode;
+            document.querySelectorAll('[data-mode]').forEach(b => {
+              const active = b.getAttribute('data-mode') === newMode;
+              b.classList.toggle('active', active);
+              b.setAttribute('aria-selected', String(active));
+            });
+            renderAll();
+          });
+        });
+
+        // Chart type buttons
+        document.querySelectorAll('[data-chart-type]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-chart-type');
+            if (type === state.chartType) return;
+            state.chartType = type;
+            document.querySelectorAll('[data-chart-type]').forEach(b => {
+              b.classList.toggle('active', b.getAttribute('data-chart-type') === type);
+            });
+            renderMainChart();
+          });
+        });
+
+        // Chart category chips
+        document.querySelectorAll('[data-chart-cat]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-chart-cat');
+            if (cat === state.chartCategory) return;
+            state.chartCategory = cat;
+            document.querySelectorAll('[data-chart-cat]').forEach(b => {
+              b.classList.toggle('active', b.getAttribute('data-chart-cat') === cat);
+            });
+            renderMainChart();
+          });
+        });
+
+        // Table filters
+        document.getElementById('tableCategorySelect').addEventListener('change', (e) => {
+          state.tableCategory = e.target.value;
+          renderTable();
+        });
+
+        document.getElementById('tableStatusSelect').addEventListener('change', (e) => {
+          state.tableStatus = e.target.value;
+          renderTable();
+        });
+
+        // Table row selection
+        document.getElementById('dataTableBody').addEventListener('click', (e) => {
+          const row = e.target.closest('tr[data-item-id]');
+          if (!row) return;
+          state.selectedItemId = row.getAttribute('data-item-id');
+          renderSpotlight();
+          renderTable();
+          const spot = document.getElementById('spotlightCard');
+          spot.classList.remove('replay-flash');
+          void spot.offsetWidth;
+          spot.classList.add('replay-flash');
+        });
+
+        // Replay animations button
+        document.getElementById('replayAnimBtn').addEventListener('click', () => {
+          document.querySelectorAll('.kpi-card').forEach(card => {
+            card.classList.remove('replay-flash');
+            void card.offsetWidth;
+            card.classList.add('replay-flash');
+          });
+          renderAll();
+        });
+      }
+
+      function initEvidenceGallery() {
+        const slots = [
+          { imgId: 'lauraImg1', phId: 'lauraPlaceholder1', file: './l1.webp', caption: 'Evidencia 1 · Tutoría 1' },
+          { imgId: 'lauraImg2', phId: 'lauraPlaceholder2', file: './l2.webp', caption: 'Evidencia 2 · Tutoría 5' }
+        ];
+        const modal = document.getElementById('lightboxModal');
+        const lbImg = document.getElementById('lightboxImg');
+        const lbCap = document.getElementById('lightboxCaption');
+
+        slots.forEach(({ imgId, phId, file, caption }) => {
+          const img = document.getElementById(imgId);
+          const ph = document.getElementById(phId);
+          img.onload = () => {
+            img.classList.remove('hidden');
+            ph.classList.add('hidden');
+          };
+          img.onerror = () => {
+            img.classList.add('hidden');
+            ph.classList.remove('hidden');
+          };
+          img.addEventListener('click', () => {
+            if (!img.classList.contains('hidden') && img.src) {
+              lbImg.src = img.src;
+              lbCap.textContent = caption;
+              modal.classList.remove('hidden');
+            }
+          });
+          img.src = file;
+        });
+
+        document.getElementById('closeLightboxBtn').addEventListener('click', () => {
+          modal.classList.add('hidden');
+        });
+        modal.addEventListener('click', (e) => {
+          if (e.target.id === 'lightboxModal') modal.classList.add('hidden');
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        bindEvents();
+        renderAll();
+        initEvidenceGallery();
+      });
+    })();
+  </script>
+</body>
+</html>
