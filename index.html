@@ -337,7 +337,7 @@
         <div class="flex items-start justify-between gap-2">
           <div>
             <p class="text-[11px] font-bold uppercase tracking-wider text-purple-600">Índice de Ruffier</p>
-            <h2 class="text-[11px] text-slate-400">((P1+P2+P3) − 200) / 100</h2>
+            <h2 class="text-[11px] text-slate-400">((P1+P2+P3) − 200) / 10</h2>
           </div>
           <div class="w-8 h-8 rounded-lg bg-fuchsia-50 text-pink-600 flex items-center justify-center shrink-0">
             <svg class="w-4 h-4 pulse-heart text-pink-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
@@ -346,11 +346,11 @@
           </div>
         </div>
         <div class="mt-2 flex items-baseline gap-1.5">
-          <span id="kpiRuffierValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">0.99</span>
-          <span class="text-xs font-medium text-slate-500">índice</span>
+          <span id="kpiRuffierValue" class="text-2xl font-extrabold text-purple-950 tabular-nums">9.9</span>
+          <span id="kpiRuffierLevel" class="text-xs font-bold text-emerald-700">· Buena</span>
         </div>
-        <div id="kpiRuffierSub" class="mt-1.5 text-[11px] font-semibold text-purple-700 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
-          T1: 0.60 → T5: 0.99 (+0.39)
+        <div id="kpiRuffierSub" class="mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full">
+          T1: 6.0 (Buena) → T5: 9.9 (Buena)
         </div>
       </article>
     </section>
@@ -484,7 +484,7 @@
           <!-- Formula pill -->
           <div class="flex justify-end">
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200/70">
-              Fórmula Excel: ((P1 + P2 + P3) − 200) / 100
+              Fórmula: ((P1 + P2 + P3) − 200) / 10
             </span>
           </div>
 
@@ -511,13 +511,20 @@
           </div>
 
           <!-- Ruffier Insight Box -->
-          <div class="p-3.5 rounded-xl bg-purple-50/80 border border-purple-200/70">
+          <div class="p-3.5 rounded-xl bg-purple-50/80 border border-purple-200/70 space-y-2">
             <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-[11px] font-bold uppercase tracking-wider text-purple-900">Resultado Índice de Ruffier</span>
-              <span id="ruffierComparePill" class="text-[11px] font-bold text-fuchsia-700 bg-white px-2.5 py-0.5 rounded-full border border-fuchsia-200">T1: 0.60 · T5: 0.99</span>
+              <span id="ruffierComparePill" class="text-[11px] font-bold text-fuchsia-700 bg-white px-2.5 py-0.5 rounded-full border border-fuchsia-200">T1: 6.0 (Buena) · T5: 9.9 (Buena)</span>
             </div>
-            <p class="mt-1.5 text-xs text-slate-700 leading-relaxed">
-              Aunque en la Tutoría 5 el <strong>Pulso 2</strong> alcanzó <strong>134 lpm</strong> tras un mayor esfuerzo, Laura mantuvo exactamente el mismo <strong>Pulso 3 de recuperación (85 lpm)</strong> que en la Tutoría 1, bajando 49 lpm en un minuto.
+            <div class="flex flex-wrap items-center gap-1 text-[10px] font-semibold text-slate-600">
+              <span class="px-1.5 py-0.5 rounded bg-white/80 border border-purple-200/60">0: Óptima</span>
+              <span class="px-1.5 py-0.5 rounded bg-white/80 border border-purple-200/60">1–5: Muy buena</span>
+              <span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">6–10: Buena (T1 y T5)</span>
+              <span class="px-1.5 py-0.5 rounded bg-white/80 border border-purple-200/60">11–15: Baja</span>
+              <span class="px-1.5 py-0.5 rounded bg-white/80 border border-purple-200/60">&gt;15: Insuficiente</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              Aunque en la Tutoría 5 el <strong>Pulso 2</strong> alcanzó <strong>134 lpm</strong> tras un mayor esfuerzo, Laura mantuvo exactamente el mismo <strong>Pulso 3 de recuperación (85 lpm)</strong> que en la Tutoría 1, bajando 49 lpm en un minuto y conservando una valoración <strong>Buena</strong> en ambas tutorías.
             </p>
           </div>
         </div>
@@ -668,7 +675,7 @@
           <span>Dashboard de Evaluación Física · Recreación y Deporte</span>
         </div>
         <p class="mt-1 text-xs text-purple-300/90">
-          Datos procesados de <span class="text-pink-300 font-medium">Test Laura.xlsx</span> (Tutoría 1 y Tutoría 5) · Fórmula Ruffier: ((P1+P2+P3) − 200) / 100
+          Datos procesados de <span class="text-pink-300 font-medium">Test Laura.xlsx</span> (Tutoría 1 y Tutoría 5) · Fórmula Ruffier: ((P1+P2+P3) − 200) / 10
         </p>
       </div>
 
@@ -821,15 +828,15 @@
         },
         {
           id: 'ruffier',
-          name: 'Índice de Ruffier ((P1+P2+P3)-200)/100',
+          name: 'Índice de Ruffier ((P1+P2+P3)-200)/10 · Nivel: Buena',
           shortName: 'Ruffier',
           category: 'cardio',
           categoryLabel: 'Cardiovascular',
           unit: 'índice',
-          t1: 0.6,
-          t5: 0.99,
+          t1: 6.0,
+          t5: 9.9,
           trend: 'stable',
-          decimals: 2
+          decimals: 1
         }
       ];
 
@@ -927,6 +934,7 @@
         const kpiSaltoVal = document.getElementById('kpiSaltoValue');
         const kpiSaltoSub = document.getElementById('kpiSaltoSub');
         const kpiRuffierVal = document.getElementById('kpiRuffierValue');
+        const kpiRuffierLvl = document.getElementById('kpiRuffierLevel');
         const kpiRuffierSub = document.getElementById('kpiRuffierSub');
 
         if (state.viewMode === 't1') {
@@ -942,9 +950,11 @@
           kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-800 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
           kpiSaltoSub.textContent = 'Tutoría 1 · Registro inicial';
 
-          animateCounter(kpiRuffierVal, ruffier.t1, 2);
-          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-800 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
-          kpiRuffierSub.textContent = 'Tutoría 1 · P1:75 · P2:100 · P3:85';
+          animateCounter(kpiRuffierVal, ruffier.t1, 1);
+          kpiRuffierLvl.className = 'text-xs font-bold text-emerald-700';
+          kpiRuffierLvl.textContent = '· Buena';
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'T1 · Nivel Buena (P1:75 · P2:100 · P3:85)';
         } else if (state.viewMode === 't5') {
           animateCounter(kpiCooperVal, cooper.t5, 0);
           kpiCooperSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
@@ -958,9 +968,11 @@
           kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
           kpiSaltoSub.textContent = 'Tutoría 5 · Registro final';
 
-          animateCounter(kpiRuffierVal, ruffier.t5, 2);
-          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-pink-700 bg-pink-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
-          kpiRuffierSub.textContent = 'Tutoría 5 · P1:80 · P2:134 · P3:85';
+          animateCounter(kpiRuffierVal, ruffier.t5, 1);
+          kpiRuffierLvl.className = 'text-xs font-bold text-emerald-700';
+          kpiRuffierLvl.textContent = '· Buena';
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'T5 · Nivel Buena (P1:80 · P2:134 · P3:85)';
         } else {
           animateCounter(kpiCooperVal, cooper.t5, 0);
           kpiCooperSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
@@ -974,9 +986,11 @@
           kpiSaltoSub.className = 'mt-1.5 text-[11px] font-semibold text-rose-700 bg-rose-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
           kpiSaltoSub.textContent = '-25 cm (-18.9%) vs T1 (132 cm)';
 
-          animateCounter(kpiRuffierVal, ruffier.t5, 2);
-          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-purple-700 bg-purple-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
-          kpiRuffierSub.textContent = 'T1: 0.60 → T5: 0.99 (+0.39)';
+          animateCounter(kpiRuffierVal, ruffier.t5, 1);
+          kpiRuffierLvl.className = 'text-xs font-bold text-emerald-700';
+          kpiRuffierLvl.textContent = '· Buena';
+          kpiRuffierSub.className = 'mt-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 inline-flex items-center gap-1 px-2 py-0.5 rounded-full';
+          kpiRuffierSub.textContent = 'T1: 6.0 (Buena) → T5: 9.9 (Buena)';
         }
 
         // Salto badge
@@ -1001,17 +1015,17 @@
           p1El.textContent = '75';
           p2El.textContent = '100';
           p3El.textContent = '85';
-          rPill.textContent = 'Solo T1: 0.60';
+          rPill.textContent = 'T1: 6.0 (Nivel: Buena)';
         } else if (state.viewMode === 't5') {
           p1El.textContent = '80';
           p2El.textContent = '134';
           p3El.textContent = '85';
-          rPill.textContent = 'Solo T5: 0.99';
+          rPill.textContent = 'T5: 9.9 (Nivel: Buena)';
         } else {
           p1El.textContent = '75 / 80';
           p2El.textContent = '100 / 134';
           p3El.textContent = '85 / 85';
-          rPill.textContent = 'T1: 0.60 · T5: 0.99';
+          rPill.textContent = 'T1: 6.0 (Buena) · T5: 9.9 (Buena)';
         }
       }
 
@@ -1208,7 +1222,7 @@
 
         if (state.viewMode === 'compare' || state.viewMode === 't1') {
           datasets.push({
-            label: 'Tutoría 1 (Ruffier 0.60)',
+            label: 'Tutoría 1 (Ruffier 6.0 · Buena)',
             data: [75, 100, 85],
             borderColor: COLORS.t1Solid,
             backgroundColor: COLORS.t1Area,
@@ -1225,7 +1239,7 @@
 
         if (state.viewMode === 'compare' || state.viewMode === 't5') {
           datasets.push({
-            label: 'Tutoría 5 (Ruffier 0.99)',
+            label: 'Tutoría 5 (Ruffier 9.9 · Buena)',
             data: [80, 134, 85],
             borderColor: COLORS.t5Solid,
             backgroundColor: COLORS.t5Area,
